@@ -1,9 +1,9 @@
 <?php
 /*
 	This is a CloudFlare bypass that makes use of the v8 javascript engine for PHP, which emulates javascript.
-	The V8 engine does not come with a DOM, so we still have to edit the code around to do it without one.
+	The V8 engine does not come with a DOM, so we still have to change the javascript around to do it without one.
 		
-	The CF bypass function takes a cloudflare browser-check html page and returns the an array with the values.
+	The CF bypass function takes a cloudflare browser-check html page and returns an array with the values.
 	
 	Array
 	(
