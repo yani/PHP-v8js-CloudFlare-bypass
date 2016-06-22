@@ -21,15 +21,16 @@
 		- https://blog.xenokore.com/
 */
 
-function CFBypass ($cf_page){
+function CFBypass($cf_page, $domain_length = false)
+{
     try { $v8 = new V8Js();
-        if(strpos($cf_page, 's,t,o,p,b,r,e,a,k,i,n,g,f, ') !== false){
-            function gb($content, $start, $end){$r = explode($start, $content); if (isset($r[1])){$r = explode($end, $r[1]); return $r[0];} return '';}
-            $domain_length = strlen(gb($cf_page, 'before accessing</span> ', '.</h1>')); $line1 = gb($cf_page, 's,t,o,p,b,r,e,a,k,i,n,g,f, ', ';') . ';';
+        if (strpos($cf_page, 's,t,o,p,b,r,e,a,k,i,n,g,f, ') !== false) {
+            function gb($content, $start, $end){$r = explode($start, $content); if (isset($r[1])) {$r = explode($end, $r[1]); return $r[0]; } return '';}
+            $domain_length = ($domain_length) ? $domain_length : strlen(gb($cf_page, 'before accessing</span> ', '.</h1>')); $line1 = gb($cf_page, 's,t,o,p,b,r,e,a,k,i,n,g,f, ', ';') . ';';
             $line2 = strstr(gb($cf_page, "document.getElementById('challenge-form');", 't.length;') . $domain_length . ';', $var = explode('=', $line1)[0]);
             $ret = $v8->executeString('var ' . $line1 . str_replace('a.value', '$', $line2)); // Yani's CF bypass of pleasure and leisure
-            if(is_numeric($ret)) return ['jschl_vc' => gb($cf_page, 'jschl_vc" value="', '"'), 'pass' => gb($cf_page, 'pass" value="', '"'), 'jschl_answer' => $ret];
-        } } catch(Exception $ex) { /*1.0*/ }
+            if (is_numeric($ret)) { return ['jschl_vc' => gb($cf_page, 'jschl_vc" value="', '"'), 'pass' => htmlentities(gb($cf_page, 'pass" value="', '"')), 'jschl_answer' => $ret]; }
+        } } catch (Exception $ex) { /*1.1*/ }
     return false;
 }
 
@@ -47,6 +48,7 @@ curl_setopt_array($ch, [
 ]);
 $res = curl_exec($ch);
 
+// If you are accessing a subdomain you will have to pass the length yourself
 if($cf = CFBypass($res)){
     Sleep(4);
     curl_setopt_array($ch, [
